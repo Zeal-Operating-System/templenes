@@ -2,4 +2,7 @@
 
 #exe {Cd(__DIR__);;};;
 
+if (!FileFind("::/3rdParty/Lib"))
+	In("#include \"Install\";;\n");
+
 #include "Load";
