@@ -12,10 +12,18 @@ CPU is a modified version of [fake6502](http://rubbermallet.org/fake6502.c) conv
 PPU/MMU is a modified version of [NESlig](https://github.com/toblu302/NESlig) converted to HolyC; SDL function calls replaced with built-in or TOSGame Lib equivalents.
 # Usage
 
-```
-	#include "Run";
-	TempleNES("path_to_rom_file.nes");
-```
+Download the latest ISO. 
+https://github.com/Zeal-Operating-System/templenes/releases/tag/latest
+
+Attach the ISO to your ZealOS VM.
+
+Boot ZealOS, and use `Mount;` to mount the ATAPI drive to `T:/`.
+
+- `CopyTree("T:/", "::/Home/zeal-templeNES/");`
+- `Cd("::/Home/zeal-templeNES/");`
+- `#include "Run";`
+- `TempleNES("path_to_rom_file.nes");`
+
 
 # TODO
 
