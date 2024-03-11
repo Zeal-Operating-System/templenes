@@ -1,0 +1,58 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - 'master'
+    paths-ignore:
+      - '**.md'
+      - '**/LICENSE'
+  pull_request:
+    branches:
+      - 'master'
+    paths-ignore:
+      - '**.md'
+      - '**/LICENSE'
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: 'true'
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get -y update
+          sudo apt-get -y install build-essential git xorriso
+
+      - name: Build 
+        if: ${{ success() }}
+        run: |
+          git clone https://github.com/Zeal-Operating-System/3rdParty.git
+          mv -f ./3rdParty/Lib/ ./Lib/
+          rm -rf ./3rdParty/
+          mkdir Z_ISO_OUT
+          cp -rf ./* ./Z_ISO_OUT || echo "Z"
+          rm -rf ./Z_ISO_OUT/Z_ISO_OUT
+          xorriso -joliet "on" -rockridge "on" -as mkisofs ./Z_ISO_OUT -o zeal-templeNES.iso
+
+      - name: Releasing Latest ISO
+        if: ${{ success() && github.event_name == 'push'}}
+        uses: "GutPuncher/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: false
+          title: "Build [${{ github.sha }}]"
+          files: ./*.iso
+
+      - name: OK
+        if: ${{ success() }}
+        run: |
+          echo "Build OK"
