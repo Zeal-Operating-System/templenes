@@ -1,5 +1,5 @@
 # templenes
-NES Emulator for TempleOS
+NES Emulator for TempleOS, ported to ZealOS
 
 This is a work in progress. Currently, only Mapper #0 games work, and things are buggy. Tested on bare-metal and VirtualBox 6.0, YMMV.
 
