@@ -5,7 +5,7 @@
 U32 frame_count = 0;
 
 CDC *ms_pointer = GRRead("Pointer.GR");
-DCColorChg(ms_pointer, LTPURPLE, 255);
+DCColorChange(ms_pointer, LTPURPLE, 255);
 
 Bool gui_focus = FALSE;
 
@@ -186,12 +186,12 @@ U0 UpdateGUI()
 	mouse_new_x = TG_MouseX;
 	mouse_new_y = TG_MouseY;
 
-	if (ms.lb && mouse_new_y<12)
+	if (mouse.lb && mouse_new_y<12)
 	{
 		gui_focus = TRUE;
 		menu_focus = RoundUp(mouse_new_x, 64) / 64;
 	}
-	if (ms.lb && mouse_new_y>11 && menu_focus)
+	if (mouse.lb && mouse_new_y>11 && menu_focus)
 	{
 		GUIDetectMenuItemClick;
 		if (item_clicked > -1)

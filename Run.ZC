@@ -1,3 +1,5 @@
 // vim: set ft=c:
 
+#exe {Cd(__DIR__);;};;
+
 #include "Load";

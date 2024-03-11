@@ -35,11 +35,12 @@ U8 loop=0;
 U8 frame_finished=0;
 U8 tmp_str[256];
 
-#include "TOSGame";
+//#include "TOSGame";
+#include "::/3rdParty/Lib/TOSGame";
 #include "GUI";
 
 //Hide 64-bit reg var compiler warnings.
-Fs->put_doc=doc_tmp;
+//Fs->put_doc=doc_tmp;
 
 U8 *cartridgebuffer;
 
@@ -72,7 +73,7 @@ U0 handleResetButton()
 	if (TG_KeyDown(Char2ScanCode('d')))
 	{
 		TG_Exit;
-		Dbg;
+		Debug;
 	}
 }
 
@@ -102,10 +103,12 @@ U0 doScreenUpdate()
 	}
 	UpdateGUI;
 	TG_Flip;
+
 }
 
 U0 drawScreen()
 {
+	U16 k = 0;
 	while (1)
 	{
 		if( frame_finished ) {
@@ -116,11 +119,16 @@ U0 drawScreen()
 		{
 			doScreenUpdate;
 		}
+		if (k == 0)
+			Sleep(1);
+		k--;
+
 	}
 }
 
 I64 TempleNES(U8 *rom_filename)
 {
+	I64 k = 0;
 	CDirEntry *chk_file=FilesFind(rom_filename);
 	if( !chk_file ) {
 		PrintErr("iNES ROM file not found.\n");
@@ -151,20 +159,20 @@ I64 TempleNES(U8 *rom_filename)
 	{
 	case 0:
 		//Copy the ROM into the CPU's memory
-		MemCpy(MMU.RAM+0x8000, cartridgebuffer+0x10, numPRGROM*0x4000);
+		MemCopy(MMU.RAM+0x8000, cartridgebuffer+0x10, numPRGROM*0x4000);
 		if(numPRGROM == 1) {
-			MemCpy(MMU.RAM+0xC000, cartridgebuffer+0x10, numPRGROM*0x4000);
+			MemCopy(MMU.RAM+0xC000, cartridgebuffer+0x10, numPRGROM*0x4000);
 		}
 		//Copy the ROM into the PPU's memory
-		MemCpy(MMU.VRAM, cartridgebuffer+0x10+0x4000*numPRGROM, 0x2000*numCHRROM);
+		MemCopy(MMU.VRAM, cartridgebuffer+0x10+0x4000*numPRGROM, 0x2000*numCHRROM);
 		break;
 	case 1:
 		//Load first PRG ROM bank
-		MemCpy(MMU.RAM+0x8000, cartridgebuffer+0x10, 0x4000);
+		MemCopy(MMU.RAM+0x8000, cartridgebuffer+0x10, 0x4000);
 		//and last PRG ROM bank
-		MemCpy(MMU.RAM+0xC000, cartridgebuffer+0x10+0x4000*(numPRGROM-1), 0x4000);
+		MemCopy(MMU.RAM+0xC000, cartridgebuffer+0x10+0x4000*(numPRGROM-1), 0x4000);
 		//Copy the ROM into the PPU's memory
-		MemCpy(MMU.VRAM, cartridgebuffer+0x10+0x4000*numPRGROM, 0x2000*numCHRROM);
+		MemCopy(MMU.VRAM, cartridgebuffer+0x10+0x4000*numPRGROM, 0x2000*numCHRROM);
 		break;
 	default:
 		break;
@@ -188,8 +196,12 @@ I64 TempleNES(U8 *rom_filename)
 	draw_task = Spawn(&drawScreen,,,1);
 
 	while(!quit) {
-		WinMsUpdate;
-		KbdMsHndlr(FALSE, FALSE);
+		WinMouseUpdate;
+		KbdMouseHandler(FALSE, FALSE);
+		if (k == 0)
+			Sleep(20);
+		if (++k >= 50000)
+			k = 0;
 
 		//emulate CPU and PPU
 		frame_finished = 0;
@@ -221,4 +233,4 @@ I64 TempleNES(U8 *rom_filename)
 	return 0;
 }
 
-Fs->put_doc=doc_prev;
+//Fs->put_doc=doc_prev;
